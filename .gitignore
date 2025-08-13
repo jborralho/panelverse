@@ -1,0 +1,50 @@
+# .NET and Visual Studio
+.vs/
+*.suo
+*.user
+*.rsuser
+*.userosscache
+*.sln.docstates
+*.ipch
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# Publish
+**/publish/
+
+# Test results and coverage
+[Tt]est[Rr]esult*/
+[Tt]est[Rr]esults*/
+*.coverage
+*.coveragexml
+coverage*.xml
+coveragereport/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+artifacts/
+
+# Rider/IDE
+.idea/
+.vscode/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+
