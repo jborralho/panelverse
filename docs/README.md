@@ -15,3 +15,5 @@ Use this index to navigate the spec.
 - 11 — Security & Privacy: `11-security-privacy.md`
 - 12 — Testing: `12-testing.md`
 - 13 — Licensing notes: `13-licensing-notes.md`
+ - Mockups: `mockups/library.md`
+ - Mockups (overlays & context): `mockups/library-overlays.md`

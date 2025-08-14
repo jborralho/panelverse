@@ -2,8 +2,106 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:vm="clr-namespace:Panelverse.App.ViewModels"
+        xmlns:conv="clr-namespace:Panelverse.App.Converters"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="Panelverse.App.MainWindow"
-        Title="Panelverse.App">
-    Welcome to Avalonia!
+        Title="Panelverse"
+        x:DataType="vm:LibraryViewModel">
+
+	<Window.Resources>
+		<conv:FilePathToBitmapConverter x:Key="FilePathToBitmapConverter" />
+	</Window.Resources>
+
+	<Grid RowDefinitions="Auto,*" ColumnDefinitions="*">
+		<!-- Header bar -->
+		<Border Background="{DynamicResource ThemeBackgroundBrush}" Padding="16">
+			<Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" VerticalAlignment="Center" ColumnSpacing="12">
+				<TextBlock Text="Panelverse" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" />
+				<TextBox Grid.Column="1" Watermark="Search…" Text="{Binding SearchText, Mode=TwoWay}" />
+				<ComboBox Grid.Column="2" MinWidth="160" ItemsSource="{Binding FilterOptions}"
+						SelectedItem="{Binding SelectedFilter}" />
+				<ComboBox Grid.Column="3" MinWidth="160" ItemsSource="{Binding SortOptions}"
+						SelectedItem="{Binding SelectedSort}" />
+				<StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="8">
+					<Button Content="Add File" Command="{Binding AddFileCommand}" />
+					<Button Content="Add Folder" Command="{Binding AddFolderCommand}" />
+					<Button Content="Refresh" Command="{Binding RefreshCommand}" IsVisible="{Binding IsDebug}" />
+					<Button Content="Reset DB" Command="{Binding ResetDatabaseCommand}" IsVisible="{Binding IsDebug}" />
+					<Button Content="☰" />
+				</StackPanel>
+			</Grid>
+		</Border>
+
+		<!-- Content: library grid -->
+		<ScrollViewer Grid.Row="1">
+			<ItemsControl ItemsSource="{Binding Items}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel Orientation="Horizontal" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="vm:LibraryItemViewModel">
+						<Border x:Name="Card" Width="180" Height="260" Margin="8" CornerRadius="8" 
+								Background="{DynamicResource ThemeControlLowBrush}" 
+								BorderBrush="{DynamicResource ThemeBorderLowBrush}" BorderThickness="1">
+							<Grid>
+
+								<!-- Thumbnail image -->
+								<Image Source="{Binding ThumbnailPath, Converter={StaticResource FilePathToBitmapConverter}}"
+									   Stretch="UniformToFill"/>
+
+								<!-- Status dot (top-left) -->
+								<Ellipse Width="10" Height="10" Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top"
+										Fill="{Binding StatusBrush}" StrokeThickness="0" />
+
+								<!-- Pages label (bottom-right) -->
+								<Border Background="#66000000" CornerRadius="4" Padding="4,2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="8">
+									<TextBlock Text="{Binding PagesLabel}" FontSize="11"/>
+								</Border>
+
+								<!-- Hover overlay at bottom -->
+								<Grid x:Name="HoverOverlay" IsVisible="{Binding #Card.IsPointerOver}" VerticalAlignment="Bottom">
+									<Border Background="#99000000" CornerRadius="0,0,8,8" Padding="8" >
+										<StackPanel Spacing="2">
+											<TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+											<TextBlock Text="{Binding SeriesAndVolume}" Foreground="#ccc" FontSize="12"/>
+											<StackPanel Orientation="Horizontal" Spacing="8">
+												<Button Content="Resume" IsVisible="{Binding IsInProgress}" />
+												<Button Content="Open" IsVisible="{Binding IsUnread}" />
+												<Button Content="Details" />
+											</StackPanel>
+										</StackPanel>
+									</Border>
+								</Grid>
+
+								<!-- Linear progress (in-progress) -->
+								<ProgressBar Minimum="0" Maximum="100" Value="{Binding ProgressPercent}"
+										Height="4" VerticalAlignment="Bottom" IsVisible="{Binding IsInProgress}"/>
+
+							</Grid>
+
+							<Border.ContextMenu>
+								<ContextMenu>
+									<MenuItem Header="Resume" IsVisible="{Binding IsInProgress}" />
+									<MenuItem Header="Open" IsVisible="{Binding IsUnread}" />
+									<MenuItem Header="Continue from…" />
+									<Separator/>
+									<MenuItem Header="Mark as Completed" IsVisible="{Binding IsInProgress}" />
+									<MenuItem Header="Mark as Unread" IsVisible="{Binding IsCompleted}" />
+									<Separator/>
+									<MenuItem Header="Edit Metadata…" />
+									<MenuItem Header="Reveal in Explorer/Finder" />
+									<MenuItem Header="Rescan Thumbnails" />
+									<Separator/>
+									<MenuItem Header="Remove from Library" />
+								</ContextMenu>
+							</Border.ContextMenu>
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+	</Grid>
 </Window>
