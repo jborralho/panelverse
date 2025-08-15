@@ -1,17 +1,21 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using System;
+using System.Linq;
 
 namespace Panelverse.App;
 
 public partial class MainWindow : Window
 {
+    private ScrollViewer? _readerScroll;
     public MainWindow()
     {
         InitializeComponent();
         this.DataContextChanged += OnDataContextChanged;
+        _readerScroll = this.FindControl<ScrollViewer>("ReaderScroll");
     }
 
     private void Reader_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
@@ -40,11 +44,17 @@ public partial class MainWindow : Window
                 {
                     Dispatcher.UIThread.Post(() =>
                     {
-                        var scroll = this.FindControl<ScrollViewer>("ReaderScroll");
-                        //TODO: on runtime, scroll its always null
-                        if (scroll != null)
+                        // Find the ScrollViewer in the visual tree after the template is applied
+                        var contentControl = this.GetVisualDescendants().OfType<ContentControl>().FirstOrDefault();
+                        if (contentControl != null)
                         {
-                            scroll.Offset = new Vector(scroll.Offset.Y, 0);
+                            var scrollViewer = contentControl.GetVisualDescendants().OfType<ScrollViewer>()
+                                .FirstOrDefault(s => s.Name == "ReaderScroll");
+
+                            if (scrollViewer != null)
+                            {
+                                scrollViewer.Offset = new Vector(0, 0);
+                            }
                         }
                     });
                 }
