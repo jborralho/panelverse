@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Panelverse.App.ViewModels;
 
 namespace Panelverse.App;
 
@@ -17,7 +18,7 @@ public partial class App : Application
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new ViewModels.LibraryViewModel()
+                DataContext = new ShellViewModel()
             };
         }
 
