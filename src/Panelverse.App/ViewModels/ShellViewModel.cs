@@ -21,7 +21,7 @@ public partial class ShellViewModel : ObservableObject
 	public void OpenItem(LibraryItemViewModel item)
 	{
 		_activeReader?.Dispose();
-		_activeReader = new ReaderViewModel(item.Id, item.Title, item.LocationPath);
+		_activeReader = new ReaderViewModel(item.Id, item.Title, item.LocationPath, startIndex: item.PagesRead);
 		CurrentViewModel = _activeReader;
 	}
 

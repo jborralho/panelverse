@@ -134,13 +134,17 @@
 						<TextBlock Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
 					</StackPanel>
 				</Border>
-				<Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-					<StackPanel Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
-						<TextBlock Text="Reader baseline" FontSize="16" HorizontalAlignment="Center"/>
-						<TextBlock Text="This will render pages from the file itself." HorizontalAlignment="Center"/>
-						<TextBlock Text="{Binding LocationPath}" FontStyle="Italic" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Grid>
+				<ScrollViewer Grid.Row="1">
+					<Border Focusable="True" PointerWheelChanged="Reader_OnPointerWheelChanged">
+						<Border.KeyBindings>
+							<KeyBinding Command="{Binding PrevPageCommand}" Gesture="Up" />
+							<KeyBinding Command="{Binding NextPageCommand}" Gesture="Down" />
+							<KeyBinding Command="{Binding PrevPageCommand}" Gesture="Left" />
+							<KeyBinding Command="{Binding NextPageCommand}" Gesture="Right" />
+						</Border.KeyBindings>
+						<Image Source="{Binding CurrentImage}" Stretch="Uniform"/>
+					</Border>
+				</ScrollViewer>
 			</Grid>
 		</DataTemplate>
 	</Window.DataTemplates>

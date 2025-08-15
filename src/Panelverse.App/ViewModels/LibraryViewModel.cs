@@ -23,6 +23,7 @@ public partial class LibraryItemViewModel : ObservableObject
 	[ObservableProperty] private string? _thumbnailPath;
 	public long Id { get; init; }
 	public string LocationPath { get; init; } = string.Empty;
+	public int PagesRead { get; init; }
 }
 
 public partial class LibraryViewModel : ObservableObject
@@ -86,7 +87,8 @@ public partial class LibraryViewModel : ObservableObject
                 IsCompleted = isCompleted,
                 StatusBrush = isCompleted ? "#10B981" : isInProgress ? "#3B82F6" : "#9CA3AF",
                 ThumbnailPath = _cache.GetExistingThumbnailPath(dto.LocationPath),
-                LocationPath = dto.LocationPath
+                LocationPath = dto.LocationPath,
+                PagesRead = dto.PagesRead
             });
 
             _cache.QueueEnsure(dto);

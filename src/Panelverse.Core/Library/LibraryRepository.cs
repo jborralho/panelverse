@@ -54,6 +54,18 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_books_location ON books(location_path);
 		await cmd.ExecuteNonQueryAsync(cancellationToken);
 	}
 
+	public async Task UpdatePagesReadAsync(long id, int pagesRead, CancellationToken cancellationToken = default)
+	{
+		await using var conn = new SqliteConnection(_connectionString);
+		await conn.OpenAsync(cancellationToken);
+		await using var cmd = conn.CreateCommand();
+		cmd.CommandText = "UPDATE books SET pages_read=$r, last_opened_at=$t WHERE id=$id;";
+		cmd.Parameters.AddWithValue("$r", pagesRead);
+		cmd.Parameters.AddWithValue("$t", DateTimeOffset.UtcNow.ToString("O"));
+		cmd.Parameters.AddWithValue("$id", id);
+		await cmd.ExecuteNonQueryAsync(cancellationToken);
+	}
+
 	public async Task ResetAsync(CancellationToken cancellationToken = default)
 	{
 		var path = DatabasePath;

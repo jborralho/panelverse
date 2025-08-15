@@ -1,6 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -9,6 +13,9 @@ using SharpCompress.Archives; // added
 using SharpCompress.Archives.Rar;
 using SharpCompress.Common;
 using Panelverse.App.Services;
+using Panelverse.Core.Sorting;
+using Avalonia.Media.Imaging;
+using Panelverse.Core.Library;
 
 namespace Panelverse.App.ViewModels;
 
@@ -19,16 +26,22 @@ public partial class ReaderViewModel : ObservableObject, System.IDisposable
 	public string? LocationPath { get; }
 	public string? ExtractedFolder { get; private set; }
 	public bool IsBusy { get; private set; }
+    public int CurrentIndex { get; private set; }
+    public Bitmap? CurrentImage { get; private set; }
+    public int TotalPages { get; private set; }
 
 	private readonly CancellationTokenSource _cts = new();
 	private Task? _workTask;
 	private bool _shouldDeleteOnDispose;
+    private readonly LibraryRepository _repository;
 
-	public ReaderViewModel(long id, string title, string? locationPath)
+	public ReaderViewModel(long id, string title, string? locationPath, int startIndex = 0)
 	{
 		Id = id;
 		Title = title;
 		LocationPath = locationPath;
+		CurrentIndex = Math.Max(0, startIndex);
+		_repository = new LibraryRepository(System.IO.Path.Combine(System.AppContext.BaseDirectory, "panelverse.db"));
 		InitializeExtraction();
 	}
 
@@ -42,6 +55,7 @@ public partial class ReaderViewModel : ObservableObject, System.IDisposable
 			{
 				ExtractedFolder = LocationPath;
 				_shouldDeleteOnDispose = false;
+				LoadCurrentImage(initial: true);
 				return;
 			}
 
@@ -84,7 +98,7 @@ public partial class ReaderViewModel : ObservableObject, System.IDisposable
 				foreach (var entry in archive.Entries)
 				{
 					if (entry.IsDirectory) continue;
-					entry.WriteToDirectory(ExtractedFolder, new ExtractionOptions
+					entry.WriteToDirectory(ExtractedFolder, new SharpCompress.Common.ExtractionOptions
 					{
 						ExtractFullPath = true,
 						Overwrite = true
@@ -92,6 +106,9 @@ public partial class ReaderViewModel : ObservableObject, System.IDisposable
 				}
 			}
 			// Other formats (7z/tar) not implemented in baseline
+
+			// After extraction, show current page
+			LoadCurrentImage(initial: true);
 		}
 		catch
 		{
@@ -101,6 +118,65 @@ public partial class ReaderViewModel : ObservableObject, System.IDisposable
 		{
 			IsBusy = false;
 			OnPropertyChanged(nameof(IsBusy));
+		}
+	}
+
+	private void LoadCurrentImage(bool initial)
+	{
+		if (string.IsNullOrWhiteSpace(ExtractedFolder)) return;
+		var images = Directory.EnumerateFiles(ExtractedFolder, "*.*", SearchOption.AllDirectories)
+			.Where(p => IsImage(p))
+			.OrderBy(p => p, Comparer<string>.Create(NaturalSort.Compare))
+			.ToList();
+		TotalPages = images.Count;
+		OnPropertyChanged(nameof(TotalPages));
+		if (images.Count == 0) return;
+		if (initial)
+		{
+			CurrentIndex = Math.Clamp(CurrentIndex, 0, images.Count - 1);
+		}
+		var targetPath = images[CurrentIndex];
+		try
+		{
+			using var fs = File.OpenRead(targetPath);
+			CurrentImage = new Bitmap(fs);
+			OnPropertyChanged(nameof(CurrentImage));
+		}
+		catch { }
+	}
+
+	private static bool IsImage(string path)
+	{
+		var ext = Path.GetExtension(path).ToLowerInvariant();
+		return ext is ".jpg" or ".jpeg" or ".png" or ".webp" or ".bmp";
+	}
+
+	[ObservableProperty]
+	private double _zoom = 1.0;
+
+	[RelayCommand]
+	public void NextPage()
+	{
+		if (string.IsNullOrWhiteSpace(ExtractedFolder)) return;
+		LoadCurrentImage(initial: false);
+		if (TotalPages <= 0) return;
+		if (CurrentIndex < TotalPages - 1)
+		{
+			CurrentIndex++;
+			LoadCurrentImage(initial: false);
+			_ = _repository.UpdatePagesReadAsync(Id, CurrentIndex);
+		}
+	}
+
+	[RelayCommand]
+	public void PrevPage()
+	{
+		if (string.IsNullOrWhiteSpace(ExtractedFolder)) return;
+		if (CurrentIndex > 0)
+		{
+			CurrentIndex--;
+			LoadCurrentImage(initial: false);
+			_ = _repository.UpdatePagesReadAsync(Id, CurrentIndex);
 		}
 	}
 
