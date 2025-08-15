@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Panelverse.Core.Library;
-using Panelverse.Core.Thumbnails;
+using Panelverse.Core.Cache;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
@@ -45,16 +45,16 @@ public partial class LibraryViewModel : ObservableObject
 
     public ObservableCollection<LibraryItemViewModel> Items { get; } = new();
     private readonly LibraryRepository _repository;
-    private readonly ThumbnailCacheService _thumbs;
+    private readonly CacheService _cache;
 
-    public LibraryViewModel() : this(new LibraryRepository(System.IO.Path.Combine(System.AppContext.BaseDirectory, "panelverse.db")), new ThumbnailCacheService(ThumbnailCacheService.GetDefaultCacheRoot())) {}
+    public LibraryViewModel() : this(new LibraryRepository(System.IO.Path.Combine(System.AppContext.BaseDirectory, "panelverse.db")), null) {}
 
-    public LibraryViewModel(LibraryRepository repository, ThumbnailCacheService? thumbs = null)
+    public LibraryViewModel(LibraryRepository repository, CacheService? cache = null)
     {
         _repository = repository;
-        _thumbs = thumbs ?? new ThumbnailCacheService(ThumbnailCacheService.GetDefaultCacheRoot());
-        _thumbs.ThumbnailReady += OnThumbnailReady;
-        _thumbs.Start();
+        _cache = cache ?? new CacheService(CacheService.GetDefaultCacheRoot(), _repository);
+        _cache.ThumbnailReady += OnThumbnailReady;
+        _cache.Start();
         _ = LoadAsync();
     }
 
@@ -83,10 +83,10 @@ public partial class LibraryViewModel : ObservableObject
                 IsInProgress = isInProgress,
                 IsCompleted = isCompleted,
                 StatusBrush = isCompleted ? "#10B981" : isInProgress ? "#3B82F6" : "#9CA3AF",
-                ThumbnailPath = _thumbs.GetExistingThumbnailPath(dto.LocationPath)
+                ThumbnailPath = _cache.GetExistingThumbnailPath(dto.LocationPath)
             });
 
-            _thumbs.QueueEnsureThumbnail(dto);
+            _cache.QueueEnsure(dto);
         }
     }
 
@@ -133,6 +133,7 @@ public partial class LibraryViewModel : ObservableObject
     private async Task ResetDatabaseAsync()
 	{
         await _repository.ResetAsync();
+        await _cache.ClearCacheAsync();
         Items.Clear();
         await LoadAsync();
 	}

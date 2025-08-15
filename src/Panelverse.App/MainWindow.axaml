@@ -63,10 +63,18 @@
 
 								<!-- Hover overlay at bottom -->
 								<Grid x:Name="HoverOverlay" IsVisible="{Binding #Card.IsPointerOver}" VerticalAlignment="Bottom">
-									<Border Background="#99000000" CornerRadius="0,0,8,8" Padding="8" >
+									<Border CornerRadius="0,0,8,8" Padding="8">
+										<Border.Background>
+											<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+												<GradientStop Offset="0" Color="Transparent"/>
+												<GradientStop Offset="0.3" Color="#DDFFFFFF"/>
+												<GradientStop Offset="1" Color="White"/>
+											</LinearGradientBrush>
+										</Border.Background>
 										<StackPanel Spacing="2">
-											<TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-											<TextBlock Text="{Binding SeriesAndVolume}" Foreground="#ccc" FontSize="12"/>
+											<TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Foreground="#333333"/>
+											<TextBlock Text="{Binding SeriesAndVolume}" Foreground="#666666" FontSize="12"/>
+											<TextBlock Text="{Binding PagesLabel, StringFormat='Read {0}'}" Foreground="#444444" FontSize="11" Margin="0,2,0,4"/>
 											<StackPanel Orientation="Horizontal" Spacing="8">
 												<Button Content="Resume" IsVisible="{Binding IsInProgress}" />
 												<Button Content="Open" IsVisible="{Binding IsUnread}" />
