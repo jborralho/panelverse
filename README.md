@@ -1,6 +1,6 @@
 # Panelverse Reader (Spec)
 
-[![CI](https://github.com/jborralho/panelverse/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jborralho/panelverse/actions/workflows/ci.yml)
+[![CI](https://github.com/jborralho/panelverse/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jborralho/panelverse/actions/workflows/ci.yml) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 A fast, privacy-first, multi-platform reader for `CBR`/`CBZ` (and friends). Built with .NET and Avalonia.
 
@@ -56,4 +56,6 @@ Extended features and milestones live in `docs/04-features.md` and `docs/07-road
 Implementation hasn’t started yet. When we begin coding, follow `docs/06-build-run.md` to bootstrap the Avalonia app and core library.
 
 ## License
-TBD (project code). RAR decoding may rely on the UnRAR library or 7-Zip components; see `docs/13-licensing-notes.md` for details.
+Licensed under the Apache License, Version 2.0. See `LICENSE`.
+
+Third-party components, including optional RAR support (7-Zip/UnRAR), have their own licenses and attributions. See `docs/13-licensing-notes.md`.

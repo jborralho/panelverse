@@ -1,0 +1,49 @@
+Panelverse
+Copyright (c) 2025 Panelverse contributors
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+You may obtain a copy of the License at: http://www.apache.org/licenses/LICENSE-2.0
+
+This product includes software developed by the Panelverse contributors.
+
+Third-party components used in this repository are listed below with their
+declared licenses as of the versions referenced in the project files.
+
+Application (src/Panelverse.App)
+- Avalonia 11.3.3 — MIT
+- Avalonia.Desktop 11.3.3 — MIT
+- Avalonia.Themes.Fluent 11.3.3 — MIT
+- Avalonia.Fonts.Inter 11.3.3 — MIT
+- Avalonia.Diagnostics 11.3.3 — MIT
+- CommunityToolkit.Mvvm 8.4.0 — MIT
+- Serilog.Sinks.Console 6.0.0 — Apache-2.0
+
+Core library (src/Panelverse.Core)
+- MetadataExtractor 2.8.1 — Apache-2.0
+- Microsoft.Data.Sqlite 9.0.8 — MIT
+- SharpCompress 0.40.0 — MIT
+
+Tests (tests/Panelverse.App.Tests)
+- Avalonia.Headless 11.3.3 — MIT
+- Avalonia.Headless.XUnit 11.3.3 — MIT
+- coverlet.collector 6.0.4 — MIT
+- Microsoft.NET.Test.Sdk 17.8.0 — MIT
+- xunit 2.5.3 — Apache-2.0
+- xunit.runner.visualstudio 2.5.3 — Apache-2.0
+
+Tests (tests/Panelverse.Core.Tests)
+- coverlet.collector 6.0.4 — MIT
+- FluentAssertions 8.5.0 — Apache-2.0
+- Microsoft.NET.Test.Sdk 17.8.0 — MIT
+- xunit 2.5.3 — Apache-2.0
+- xunit.runner.visualstudio 2.5.3 — Apache-2.0
+
+Notes
+- RAR/CBR functionality in this repository is implemented via SharpCompress
+  (MIT). If you choose to distribute binaries that bundle 7-Zip or UnRAR
+  components for RAR support, you must include their respective license texts
+  and follow their terms. See docs/13-licensing-notes.md for guidance.
+
+License identifiers above are provided for convenience and are not a substitute
+for reviewing the upstream license texts in their source repositories or NuGet
+pages at release time.
