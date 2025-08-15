@@ -9,6 +9,7 @@ public sealed record LibraryItemDto(
     int PagesRead,
     string LocationPath,
     bool IsFolder,
+    long? ParentId,
     string? ThumbnailPath,
     DateTimeOffset AddedAt,
     DateTimeOffset? LastOpenedAt

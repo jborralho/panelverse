@@ -151,7 +151,25 @@ public partial class LibraryViewModel : ObservableObject
 		var topLevel = Avalonia.Application.Current?.ApplicationLifetime as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime;
 		var folder = await dialog.ShowAsync(topLevel?.MainWindow!);
 		if (string.IsNullOrWhiteSpace(folder)) return;
-		await _repository.UpsertByLocationAsync(folder, isFolder: true, title: System.IO.Path.GetFileName(folder));
+		var folderId = await _repository.UpsertByLocationAsync(folder, isFolder: true, title: System.IO.Path.GetFileName(folder));
+		try
+		{
+			var allowed = new[] { ".cbz", ".zip", ".cbr", ".rar" };
+			foreach (var file in System.IO.Directory.EnumerateFiles(folder))
+			{
+				var ext = System.IO.Path.GetExtension(file).ToLowerInvariant();
+				if (allowed.Contains(ext))
+				{
+					await _repository.UpsertByLocationAsync(
+						file,
+						isFolder: false,
+						title: System.IO.Path.GetFileNameWithoutExtension(file),
+						pagesTotal: 0,
+						parentId: folderId);
+				}
+			}
+		}
+		catch { }
 		Items.Clear();
 		await LoadAsync();
 	}
