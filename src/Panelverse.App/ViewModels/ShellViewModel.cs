@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Panelverse.Core.Library;
 using System.Threading.Tasks;
 using System.Linq;
+using System.ComponentModel;
 
 namespace Panelverse.App.ViewModels;
 
@@ -26,15 +27,21 @@ public partial class ShellViewModel : ObservableObject
 	{
 		_activeReader?.Dispose();
 		_activeReader = new ReaderViewModel(item.Id, item.Title, item.LocationPath, startIndex: item.PagesRead);
-		CurrentViewModel = _activeReader;
-	}
+		_activeReader.PropertyChanged += ChildPropertyChanged;
+        CurrentViewModel = _activeReader;
+		OnPropertyChanged(nameof(CurrentViewModel));
+    }
 
-	[RelayCommand]
+    public event PropertyChangedEventHandler? ChildPropertyChanged;
+
+
+    [RelayCommand]
 	public void NavigateBackToLibrary()
 	{
 		var reader = _activeReader;
 		_activeReader = null;
 		CurrentViewModel = Library;
+		OnPropertyChanged(nameof(CurrentViewModel));
 		try
 		{
 			reader?.Dispose();

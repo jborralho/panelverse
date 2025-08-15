@@ -134,13 +134,13 @@
 						<TextBlock Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
 					</StackPanel>
 				</Border>
-				<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+				<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" x:Name="ReaderScroll">
 					<Border Focusable="True">
 						<Border.KeyBindings>
 							<KeyBinding Command="{Binding PrevPageCommand}" Gesture="Left" />
 							<KeyBinding Command="{Binding NextPageCommand}" Gesture="Right" />
 						</Border.KeyBindings>
-						<Image Source="{Binding CurrentImage}" Stretch="Uniform"/>
+						<Image Source="{Binding CurrentImage}" Stretch="Uniform"/> 
 					</Border>
 				</ScrollViewer>
 			</Grid>
