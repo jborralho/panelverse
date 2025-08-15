@@ -70,17 +70,19 @@ public partial class LibraryViewModel : ObservableObject
 
         await foreach (var dto in _repository.GetItemsAsync(cancellationToken))
         {
-            var isCompleted = dto.PagesTotal > 0 && dto.PagesRead >= dto.PagesTotal;
-            var isUnread = dto.PagesRead <= 0;
+			var isStarted = dto.LastOpenedAt != null;
+			var pagesRead = isStarted ? dto.PagesRead + 1 : dto.PagesRead;
+            var isCompleted = dto.PagesTotal > 0 && pagesRead >= dto.PagesTotal;
+            var isUnread = pagesRead <= 0;
             var isInProgress = !isUnread && !isCompleted;
-            var percent = dto.PagesTotal > 0 ? (dto.PagesRead * 100.0) / dto.PagesTotal : 0;
+            var percent = dto.PagesTotal > 0 ? (pagesRead * 100.0) / dto.PagesTotal : 0;
 
             Items.Add(new LibraryItemViewModel
             {
                 Id = dto.Id,
                 Title = dto.Title,
                 SeriesAndVolume = BuildSeriesAndVolume(dto.Series, dto.Volume),
-                PagesLabel = $"{dto.PagesRead}/{dto.PagesTotal}",
+                PagesLabel = $"{pagesRead}/{dto.PagesTotal}",
                 ProgressPercent = percent,
                 IsUnread = isUnread,
                 IsInProgress = isInProgress,
@@ -88,7 +90,7 @@ public partial class LibraryViewModel : ObservableObject
                 StatusBrush = isCompleted ? "#10B981" : isInProgress ? "#3B82F6" : "#9CA3AF",
                 ThumbnailPath = _cache.GetExistingThumbnailPath(dto.LocationPath),
                 LocationPath = dto.LocationPath,
-                PagesRead = dto.PagesRead
+                PagesRead = pagesRead
             });
 
             _cache.QueueEnsure(dto);

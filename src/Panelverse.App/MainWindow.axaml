@@ -79,7 +79,7 @@
 												<TextBlock Text="{Binding SeriesAndVolume}" Foreground="#666666" FontSize="12"/>
 												<TextBlock Text="{Binding PagesLabel, StringFormat='Read {0}'}" Foreground="#444444" FontSize="11" Margin="0,2,0,4"/>
 												<StackPanel Orientation="Horizontal" Spacing="8">
-													<Button Content="Resume" IsVisible="{Binding IsInProgress}"
+													<Button Content="Resume" IsVisible="{Binding !IsUnread}"
 															Command="{Binding $parent[Window].DataContext.OpenItemCommand}"
 															CommandParameter="{Binding}" />
 													<Button Content="Open" IsVisible="{Binding IsUnread}"
@@ -103,6 +103,9 @@
 												Command="{Binding $parent[Window].DataContext.OpenItemCommand}"
 												CommandParameter="{Binding}" />
 										<MenuItem Header="Open" IsVisible="{Binding IsUnread}"
+												Command="{Binding $parent[Window].DataContext.OpenItemCommand}"
+												CommandParameter="{Binding}" />
+										<MenuItem Header="Open" IsVisible="{Binding IsCompleted}"
 												Command="{Binding $parent[Window].DataContext.OpenItemCommand}"
 												CommandParameter="{Binding}" />
 										<MenuItem Header="Continue from…" />

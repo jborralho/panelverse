@@ -90,6 +90,17 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_books_location ON books(location_path);
 		await cmd.ExecuteNonQueryAsync(cancellationToken);
 	}
 
+	public async Task UpdateLastOpenedAtAsync(long id, CancellationToken cancellationToken = default)
+	{
+		await using var conn = new SqliteConnection(_connectionString);
+		await conn.OpenAsync(cancellationToken);
+		await using var cmd = conn.CreateCommand();
+		cmd.CommandText = "UPDATE books SET last_opened_at=$t WHERE id=$id;";
+		cmd.Parameters.AddWithValue("$t", DateTimeOffset.UtcNow.ToString("O"));
+		cmd.Parameters.AddWithValue("$id", id);
+		await cmd.ExecuteNonQueryAsync(cancellationToken);
+	}
+
 	public async Task<LibraryItemDto?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
 	{
 		await using var conn = new SqliteConnection(_connectionString);
@@ -154,11 +165,12 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_books_location ON books(location_path);
 		await conn.OpenAsync(cancellationToken);
 		await using (var insert = conn.CreateCommand())
 		{
+			var computedTitle = title ?? (isFolder ? System.IO.Path.GetFileName(path) : System.IO.Path.GetFileNameWithoutExtension(path));
 			insert.CommandText = @"
 INSERT INTO books (title, series, volume, pages_total, pages_read, location_path, is_folder, parent_id, thumbnail_path, added_at, last_opened_at)
 VALUES ($title, NULL, NULL, $pages_total, 0, $location_path, $is_folder, $parent_id, NULL, $added_at, NULL)
 ON CONFLICT(location_path) DO UPDATE SET title=excluded.title, parent_id=excluded.parent_id;";
-			insert.Parameters.AddWithValue("$title", title ?? System.IO.Path.GetFileNameWithoutExtension(path));
+			insert.Parameters.AddWithValue("$title", computedTitle);
 			insert.Parameters.AddWithValue("$pages_total", pagesTotal);
 			insert.Parameters.AddWithValue("$location_path", path);
 			insert.Parameters.AddWithValue("$is_folder", isFolder ? 1 : 0);
@@ -209,7 +221,7 @@ ON CONFLICT(location_path) DO UPDATE SET title=excluded.title, parent_id=exclude
 		await using var conn = new SqliteConnection(_connectionString);
 		await conn.OpenAsync(cancellationToken);
 		await using var cmd = conn.CreateCommand();
-		cmd.CommandText = "SELECT id, title, series, volume, pages_total, pages_read, location_path, is_folder, parent_id, thumbnail_path, added_at, last_opened_at FROM books WHERE parent_id IS NULL ORDER BY title;";
+		cmd.CommandText = "SELECT id, title, series, volume, pages_total, pages_read, location_path, is_folder, parent_id, thumbnail_path, added_at, last_opened_at FROM books WHERE parent_id IS NULL AND is_folder=0 ORDER BY title;";
 		await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
 		while (await reader.ReadAsync(cancellationToken))
 		{
