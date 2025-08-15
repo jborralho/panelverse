@@ -9,6 +9,7 @@ public partial class ShellViewModel : ObservableObject
 	[ObservableProperty] private object? _currentViewModel;
 
 	public LibraryViewModel Library { get; }
+    private ReaderViewModel? _activeReader;
 
 	public ShellViewModel()
 	{
@@ -19,12 +20,16 @@ public partial class ShellViewModel : ObservableObject
 	[RelayCommand]
 	public void OpenItem(LibraryItemViewModel item)
 	{
-		CurrentViewModel = new ReaderViewModel(item.Id, item.Title, item.LocationPath);
+		_activeReader?.Dispose();
+		_activeReader = new ReaderViewModel(item.Id, item.Title, item.LocationPath);
+		CurrentViewModel = _activeReader;
 	}
 
 	[RelayCommand]
 	public void NavigateBackToLibrary()
 	{
+		_activeReader?.Dispose();
+		_activeReader = null;
 		CurrentViewModel = Library;
 	}
 }

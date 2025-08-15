@@ -6,6 +6,7 @@ using Panelverse.Core.Cache;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using Panelverse.App.Services;
 
 namespace Panelverse.App.ViewModels;
 
@@ -136,6 +137,7 @@ public partial class LibraryViewModel : ObservableObject
 	{
         await _repository.ResetAsync();
         await _cache.ClearCacheAsync();
+        try { ReaderTempService.ClearAll(); } catch { }
         Items.Clear();
         await LoadAsync();
 	}
