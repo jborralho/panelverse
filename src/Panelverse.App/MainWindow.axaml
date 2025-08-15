@@ -134,11 +134,9 @@
 						<TextBlock Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
 					</StackPanel>
 				</Border>
-				<ScrollViewer Grid.Row="1">
-					<Border Focusable="True" PointerWheelChanged="Reader_OnPointerWheelChanged">
+				<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+					<Border Focusable="True">
 						<Border.KeyBindings>
-							<KeyBinding Command="{Binding PrevPageCommand}" Gesture="Up" />
-							<KeyBinding Command="{Binding NextPageCommand}" Gesture="Down" />
 							<KeyBinding Command="{Binding PrevPageCommand}" Gesture="Left" />
 							<KeyBinding Command="{Binding NextPageCommand}" Gesture="Right" />
 						</Border.KeyBindings>

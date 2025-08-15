@@ -66,6 +66,33 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_books_location ON books(location_path);
 		await cmd.ExecuteNonQueryAsync(cancellationToken);
 	}
 
+	public async Task<LibraryItemDto?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
+	{
+		await using var conn = new SqliteConnection(_connectionString);
+		await conn.OpenAsync(cancellationToken);
+		await using var cmd = conn.CreateCommand();
+		cmd.CommandText = "SELECT id, title, series, volume, pages_total, pages_read, location_path, is_folder, thumbnail_path, added_at, last_opened_at FROM books WHERE id=$id LIMIT 1;";
+		cmd.Parameters.AddWithValue("$id", id);
+		await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+		if (await reader.ReadAsync(cancellationToken))
+		{
+			return new LibraryItemDto(
+				Id: reader.GetInt64(0),
+				Title: reader.GetString(1),
+				Series: reader.IsDBNull(2) ? null : reader.GetString(2),
+				Volume: reader.IsDBNull(3) ? null : reader.GetInt32(3),
+				PagesTotal: reader.GetInt32(4),
+				PagesRead: reader.GetInt32(5),
+				LocationPath: reader.GetString(6),
+				IsFolder: reader.GetInt32(7) != 0,
+				ThumbnailPath: reader.IsDBNull(8) ? null : reader.GetString(8),
+				AddedAt: DateTimeOffset.Parse(reader.GetString(9)),
+				LastOpenedAt: reader.IsDBNull(10) ? null : DateTimeOffset.Parse(reader.GetString(10))
+			);
+		}
+		return null;
+	}
+
 	public async Task ResetAsync(CancellationToken cancellationToken = default)
 	{
 		var path = DatabasePath;
