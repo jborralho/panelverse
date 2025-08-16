@@ -29,6 +29,7 @@ public partial class ReaderViewModel : ObservableObject, System.IDisposable
     public int CurrentIndex { get; private set; }
     public Bitmap? CurrentImage { get; private set; }
     public int TotalPages { get; private set; }
+    public string PageLabel => $"{(TotalPages > 0 ? CurrentIndex + 1 : 0)}/{TotalPages}";
 
 	private readonly CancellationTokenSource _cts = new();
 	private Task? _workTask;
@@ -130,6 +131,7 @@ public partial class ReaderViewModel : ObservableObject, System.IDisposable
 			.ToList();
 		TotalPages = images.Count;
 		OnPropertyChanged(nameof(TotalPages));
+        OnPropertyChanged(nameof(PageLabel));
 		if (images.Count == 0) return;
 		if (initial)
 		{
@@ -165,6 +167,7 @@ public partial class ReaderViewModel : ObservableObject, System.IDisposable
 			CurrentIndex++;
 			LoadCurrentImage(initial: false);
 			_ = _repository.UpdatePagesReadAsync(Id, CurrentIndex);
+			OnPropertyChanged(nameof(PageLabel));
 		}
 	}
 
@@ -177,6 +180,7 @@ public partial class ReaderViewModel : ObservableObject, System.IDisposable
 			CurrentIndex--;
 			LoadCurrentImage(initial: false);
 			_ = _repository.UpdatePagesReadAsync(Id, CurrentIndex);
+			OnPropertyChanged(nameof(PageLabel));
 		}
 	}
 

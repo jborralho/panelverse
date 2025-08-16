@@ -132,10 +132,11 @@
 		<DataTemplate x:DataType="vm:ReaderViewModel" DataType="{x:Type vm:ReaderViewModel}">
 			<Grid RowDefinitions="Auto,*">
 				<Border Background="{DynamicResource ThemeBackgroundBrush}" Padding="16">
-					<StackPanel Orientation="Horizontal" Spacing="12">
+					<Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
 						<Button Content="← Back" Command="{Binding $parent[Window].DataContext.NavigateBackToLibraryCommand}" />
-						<TextBlock Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
-					</StackPanel>
+						<TextBlock Grid.Column="1" Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="2" Text="{Binding PageLabel}" VerticalAlignment="Center"/>
+					</Grid>
 				</Border>
 				<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" x:Name="ReaderScroll">
 					<Border Focusable="True">

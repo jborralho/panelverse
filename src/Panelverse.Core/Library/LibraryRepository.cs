@@ -221,7 +221,7 @@ ON CONFLICT(location_path) DO UPDATE SET title=excluded.title, parent_id=exclude
 		await using var conn = new SqliteConnection(_connectionString);
 		await conn.OpenAsync(cancellationToken);
 		await using var cmd = conn.CreateCommand();
-		cmd.CommandText = "SELECT id, title, series, volume, pages_total, pages_read, location_path, is_folder, parent_id, thumbnail_path, added_at, last_opened_at FROM books WHERE parent_id IS NULL AND is_folder=0 ORDER BY title;";
+		cmd.CommandText = "SELECT id, title, series, volume, pages_total, pages_read, location_path, is_folder, parent_id, thumbnail_path, added_at, last_opened_at FROM books WHERE parent_id IS NULL ORDER BY title;";
 		await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
 		while (await reader.ReadAsync(cancellationToken))
 		{
