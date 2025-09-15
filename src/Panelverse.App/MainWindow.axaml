@@ -138,8 +138,8 @@
 						<TextBlock Grid.Column="2" Text="{Binding PageLabel}" VerticalAlignment="Center"/>
 					</Grid>
 				</Border>
-				<Grid Grid.Row="1">
-					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" x:Name="ReaderScroll">
+				<Grid Grid.Row="1" ColumnDefinitions="1*,2*,1*">
+					<ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" x:Name="ReaderScroll">
 						<Border Focusable="True">
 							<Border.KeyBindings>
 								<KeyBinding Command="{Binding PrevPageCommand}" Gesture="Left" />
@@ -148,19 +148,16 @@
 							<Image Source="{Binding CurrentImage}" Stretch="Uniform"/>
 						</Border>
 					</ScrollViewer>
-					<!-- being outside the scrollviewer to facilitate the arrow - but the scroll no longer works here - but should be ok -->
-					<Grid ColumnDefinitions="1*,2*,1*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Panel.ZIndex="1">
-						<Button Grid.Column="0" Background="Transparent" BorderThickness="0" Command="{Binding PrevPageCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-							<Border IsVisible="{Binding $parent[Button].IsPointerOver}" Background="#40000000" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-								<TextBlock Text="◀" FontSize="48" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-							</Border>
-						</Button>
-						<Button Grid.Column="2" Background="Transparent" BorderThickness="0" Command="{Binding NextPageCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-							<Border IsVisible="{Binding $parent[Button].IsPointerOver}" Background="#40000000" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-								<TextBlock Text="▶" FontSize="48" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-							</Border>
-						</Button>
-					</Grid>
+					<Button Grid.Column="0" Background="Transparent" BorderThickness="0" Command="{Binding PrevPageCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+						<Border IsVisible="{Binding $parent[Button].IsPointerOver}" Background="#40000000" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+							<TextBlock Text="◀" FontSize="48" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+					</Button>
+					<Button Grid.Column="2" Background="Transparent" BorderThickness="0" Command="{Binding NextPageCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+						<Border IsVisible="{Binding $parent[Button].IsPointerOver}" Background="#40000000" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+							<TextBlock Text="▶" FontSize="48" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+					</Button>
 				</Grid>
 			</Grid>
 		</DataTemplate>
